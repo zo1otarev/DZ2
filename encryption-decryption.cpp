@@ -9,7 +9,7 @@
 using namespace std;
 
 void encryption(string t) {
-    setlocale(LC_ALL, "Russian")
+    setlocale(LC_ALL, "Russian");
 
     string a;
     int b, c, d = 0;
