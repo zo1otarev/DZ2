@@ -1,7 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/untitled.dir/encryption-decryption.cpp.o"
   "CMakeFiles/untitled.dir/main.cpp.o"
-  "CMakeFiles/untitled.dir/mode.cpp.o"
   "untitled"
   "untitled.pdb"
 )

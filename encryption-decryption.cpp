@@ -1,59 +1,79 @@
 //
-// Created by daniil on 07.11.2020.
+// Created by zo1otarev
 //
 #include <iostream>
 #include <cstdlib>
 #include <string>
 #include <fstream>
+#include <vector>
 
-using namespace std;
-
-void encryption(string t) {
+//  Режим шифрования
+void encryption(std::string t) {
     setlocale(LC_ALL, "Russian");
 
-    string a;
-    int b, c, d = 0;
-    cout << "Your text" << endl;
-    getline(cin, a);
-    cout << "Password" << endl;
-    cin >> b; //Пароль, семя ГСПЧ
-    srand(b);
-    for (int i = 0; i < a.size(); i += 4) {
-        for (int m = 0; m < 4; m++) {  // d - 32 битное число, состоящее из 4 кодов символов, записанных упорядоченно
-            d <<= 8; // Освобождаем место для байта кода символа (4 раза)
-            d |= static_cast<int8_t>(a[i + m]); // Записываем на свободное место байт кода символа
+    std::vector<int> crmessage; //Вектор, в который будут сохраняться шифрованные коды символов сообщения
+    std::cout << "Введите текст, который вы хотите зашифровать" << std::endl;
+    std::string message;
+    getline(std::cin, message); //Записываем в переменную сообщение
+    std::cout << "Пароль шифрования" << std::endl;
+    int seem; //Семя ГПСЧ (Пароль)
+    std::cin >> seem;
+    srand(seem); // Настраиваем ГПСЧ с помощью пароля
+    //Добавляем незначимые пробелы для того, чтобы кол-во символов в сообщение было кратно 4 (Так удобней делить на блоки)
+    for (int i = 0; i < message.size() % 4; i++) message += ' ';
+    for (int i = 0; i < message.size(); i += 4) { //Делим на блоки по 4 символа (4 байта)
+        int block = 0;
+        for (int m = 0; m < 4; m++) {                     //
+            block <<= 8;                                  //Записываем в блок подряд коды 4 символов
+            block |= static_cast<int8_t>(message[i + m]); //
         }
-        c = rand(); // ГСПЧ, у меня сразу выдается значение 4 байта, насколько я понял из sizeof(rand())
-        c ^= d; // Исключающее ИЛИ (encryption)
-        c = (c >> 30) | (c << 2); // Мой сдвиг на 2 бита
-        for (int k = 0; k < 4; k++) a[i + k] = static_cast<char>((c >> ((3 - k) * 8)) & 255); // Меняем 4 символа на новые
-    }                                                                //Если точнее, то сдвигаем байт нужного кода символа на первое место и накладываем маску байта
-    ofstream myfile; //Вывод в файл
-    myfile.open(t);
-    myfile << a;
-    myfile.close();
+        int crypt = rand(); //Псевдослучайное число для шифрования
+        block ^= crypt;     //Шифруем блок
+        int block_bias =
+                (block >> 30) | (block << 2); //Смещаем блок циклически на 2 бита влево, получаем смещенный блок
+        for (int m = 0; m < 4; m++) {
+            int o = block_bias >> ((3 - m) * 8);  //Делим смещенный блок на байты и записываем в вектор
+            crmessage.push_back(o & 255);         //
+        }
+    }
+    std::ofstream file(t, std::ios::app);                                   //
+    for (int i = 0; i < crmessage.size(); i++) file << crmessage[i] << ' '; //Выводим вектор в файл
+    file.close();                                                           //
 }
 
-void decryption(string t) {   //То же самое в обратном порядке
-
-    string a;
-    int b, c = 0, d;
-    cout << "Password" << endl;
-    cin >> b;
-    srand(b);
-    ifstream myfile;
+//Режим дешифровки
+//Почти тоже самое в обратном направлении, я обошел здесь два непонятных бага, поэтому есть различия
+//Если будет нужно, то я могу пояснить какие именно
+void decryption(std::string t) { //Почти тоже самое в обратном направлении
+    std::vector<int> cryptv; // Вектор соотнесенных байтовых паролей для каждого кода зашифрованног символа
+    std::vector<int> crmessage; //Вектор, который будет содержать зашифрованные смещенные коды символов сообщения
+    std::cout << "Введите пароль дешифрования" << std::endl;
+    int seem; //Пароль (семя ГПСЧ)
+    std::cin >> seem;
+    srand(seem);
+    std::string strcrmessage;
+    std::ifstream myfile;
     myfile.open(t);
-    getline(myfile, a);
+    getline(myfile, strcrmessage); //Записываем в строку коды зашифрованных символов
     myfile.close();
-    for (int i = 0; i < a.size(); i += 4) {
-        for (int m = 0; m < 4; m++) {
-            c <<= 8;
-            c |= static_cast<int8_t>(a[i + m]);
-        }
-        c = (c >> 2) | (c << 30);
-        d = rand();
-        c ^= d;
-        for (int k = 0; k < 4; k++) a[i + k] = static_cast<char>((c >> ((3 - k) * 8)) & 255);
+    strcrmessage += ' '; //Добавляем, чтобы было проще считывать в вектор коды
+    for (unsigned int i = 0; i < strcrmessage.size(); i++) {
+        int n = strcrmessage.find(' ', i);
+        int crp = atoi(strcrmessage.substr(i, n - i).c_str());  //Считываем в вектор зашифрованные коды
+        crmessage.push_back(crp);
+        i = n;
     }
-    cout << a << endl;
+    for (int i = 0; i < crmessage.size(); i += 4) {
+        int f = (crmessage[i + 3] << 6) & 255;            //Делаем обратный сдвиг на 2 бита влево поблочно
+        for (int m = 3; m > 0; m--) {
+            crmessage[i + m] = (crmessage[i + m] >> 2) | ((crmessage[i + m - 1] << 6) & 255);
+        }
+        crmessage[i] = (crmessage[i] >> 2) | f;
+        int crypt = rand();                     // Блочный дешифровщик на 4 байта из ГПСЧ
+        //Разбиваем его на байтовые для соотнесенности и записываем в вектор
+        for (int m = 0; m < 4; m++) cryptv.push_back((crypt >> ((3 - m) * 8)) & 255);
+    }
+    for (int i = 0; i < crmessage.size() - 1; i++)
+        std::cout << static_cast<char>(crmessage[i] ^ cryptv[i]); //Побайтово дешифруем и выводим
+    std::cout << std::endl;
 }

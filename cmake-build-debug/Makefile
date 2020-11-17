@@ -197,33 +197,6 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/main.cpp.s
 .PHONY : main.cpp.s
 
-mode.o: mode.cpp.o
-
-.PHONY : mode.o
-
-# target to build an object file
-mode.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/mode.cpp.o
-.PHONY : mode.cpp.o
-
-mode.i: mode.cpp.i
-
-.PHONY : mode.i
-
-# target to preprocess a source file
-mode.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/mode.cpp.i
-.PHONY : mode.cpp.i
-
-mode.s: mode.cpp.s
-
-.PHONY : mode.s
-
-# target to generate assembly for a file
-mode.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/mode.cpp.s
-.PHONY : mode.cpp.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -239,9 +212,6 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
-	@echo "... mode.o"
-	@echo "... mode.i"
-	@echo "... mode.s"
 .PHONY : help
 
 

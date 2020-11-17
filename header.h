@@ -1,11 +1,18 @@
 //
-// Created by daniil on 07.11.2020.
+// Created by zo1otarev
 //
+#include <iostream>
+#include <cstdlib>
 #include <string>
-using namespace std;
+#include <fstream>
+#include <vector>
+
 #ifndef UNTITLED_HEADER_H
 #define UNTITLED_HEADER_H
-const string mode(string t); // Режим работы
-void encryption(string t);
-void decryption (string t);
+
+const std::string mode(std::string t); // Режим работы
+void encryption(std::string t);
+
+void decryption(std::string t);
+
 #endif //UNTITLED_HEADER_H

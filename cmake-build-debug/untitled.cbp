@@ -91,9 +91,6 @@
 		<Unit filename="/home/daniil/untitled/main.cpp">
 			<Option target="untitled"/>
 		</Unit>
-		<Unit filename="/home/daniil/untitled/mode.cpp">
-			<Option target="untitled"/>
-		</Unit>
 		<Unit filename="/home/daniil/untitled/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
